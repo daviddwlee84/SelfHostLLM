@@ -7,28 +7,6 @@ st.title("Ollama Demo")
 
 host_url = st.text_input("Ollama URL", "http://localhost:11434")
 
-"""
-Here are some example models that can be downloaded:
-
-| Model              | Parameters | Size  | Download            |
-| ------------------ | ---------- | ----- | ------------------- |
-| Llama 2            | 7B         | 3.8GB | `llama2`            |
-| Mistral            | 7B         | 4.1GB | `mistral`           |
-| Dolphin Phi        | 2.7B       | 1.6GB | `dolphin-phi`       |
-| Phi-2              | 2.7B       | 1.7GB | `phi`               |
-| Neural Chat        | 7B         | 4.1GB | `neural-chat`       |
-| Starling           | 7B         | 4.1GB | `starling-lm`       |
-| Code Llama         | 7B         | 3.8GB | `codellama`         |
-| Llama 2 Uncensored | 7B         | 3.8GB | `llama2-uncensored` |
-| Llama 2 13B        | 13B        | 7.3GB | `llama2:13b`        |
-| Llama 2 70B        | 70B        | 39GB  | `llama2:70b`        |
-| Orca Mini          | 3B         | 1.9GB | `orca-mini`         |
-| LLaVA              | 7B         | 4.5GB | `llava`             |
-| Gemma              | 2B         | 1.4GB | `gemma:2b`          |
-| Gemma              | 7B         | 4.8GB | `gemma:7b`          |
-| Solar              | 10.7B      | 6.1GB | `solar`             |
-"""
-
 model_list = {
     "llama2": "Llama 2",
     "llama2-uncensored": "Llama 2 Uncensored",
@@ -51,10 +29,33 @@ model_name = st.selectbox(
     "Model", options=model_list.keys(), format_func=lambda x: model_list[x]
 )
 
+with st.expander("Model List"):
+    st.markdown(
+        """
+    Here are some example models that can be downloaded:
 
-models = st.empty()
-models_df = pd.DataFrame(ollama.list()["models"])
-models.dataframe(models_df)
+    | Model              | Parameters | Size  | Download            |
+    | ------------------ | ---------- | ----- | ------------------- |
+    | Llama 2            | 7B         | 3.8GB | `llama2`            |
+    | Mistral            | 7B         | 4.1GB | `mistral`           |
+    | Dolphin Phi        | 2.7B       | 1.6GB | `dolphin-phi`       |
+    | Phi-2              | 2.7B       | 1.7GB | `phi`               |
+    | Neural Chat        | 7B         | 4.1GB | `neural-chat`       |
+    | Starling           | 7B         | 4.1GB | `starling-lm`       |
+    | Code Llama         | 7B         | 3.8GB | `codellama`         |
+    | Llama 2 Uncensored | 7B         | 3.8GB | `llama2-uncensored` |
+    | Llama 2 13B        | 13B        | 7.3GB | `llama2:13b`        |
+    | Llama 2 70B        | 70B        | 39GB  | `llama2:70b`        |
+    | Orca Mini          | 3B         | 1.9GB | `orca-mini`         |
+    | LLaVA              | 7B         | 4.5GB | `llava`             |
+    | Gemma              | 2B         | 1.4GB | `gemma:2b`          |
+    | Gemma              | 7B         | 4.8GB | `gemma:7b`          |
+    | Solar              | 10.7B      | 6.1GB | `solar`             |
+    """
+    )
+    models = st.empty()
+    models_df = pd.DataFrame(ollama.list()["models"])
+    models.dataframe(models_df)
 
 avail_models = set(models_df["name"].str.split(":").str[0])
 
