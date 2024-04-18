@@ -20,8 +20,8 @@ model_list = {
     "starling-lm": "Starling",
     "orca-mini": "Orca Mini",
     "llava": "LLaVA",
-    "gemma:2b": "Gemma",
-    "gemma:7b": "Gemma",
+    "gemma:2b": "Gemma 2B",
+    "gemma:7b": "Gemma 7B",
     "solar": "Solar",
 }
 
@@ -47,22 +47,25 @@ with st.expander("Model List"):
     | Model              | Parameters | Size  | Download            |
     | ------------------ | ---------- | ----- | ------------------- |
     | Llama 2            | 7B         | 3.8GB | `llama2`            |
+    | Llama 2 Uncensored | 7B         | 3.8GB | `llama2-uncensored` |
+    | Llama 2 13B        | 13B        | 7.3GB | `llama2:13b`        |
+    | Llama 2 70B        | 70B        | 39GB  | `llama2:70b`        |
+    | Code Llama         | 7B         | 3.8GB | `codellama`         |
     | Mistral            | 7B         | 4.1GB | `mistral`           |
     | Dolphin Phi        | 2.7B       | 1.6GB | `dolphin-phi`       |
     | Phi-2              | 2.7B       | 1.7GB | `phi`               |
     | Neural Chat        | 7B         | 4.1GB | `neural-chat`       |
     | Starling           | 7B         | 4.1GB | `starling-lm`       |
-    | Code Llama         | 7B         | 3.8GB | `codellama`         |
-    | Llama 2 Uncensored | 7B         | 3.8GB | `llama2-uncensored` |
-    | Llama 2 13B        | 13B        | 7.3GB | `llama2:13b`        |
-    | Llama 2 70B        | 70B        | 39GB  | `llama2:70b`        |
     | Orca Mini          | 3B         | 1.9GB | `orca-mini`         |
     | LLaVA              | 7B         | 4.5GB | `llava`             |
-    | Gemma              | 2B         | 1.4GB | `gemma:2b`          |
-    | Gemma              | 7B         | 4.8GB | `gemma:7b`          |
+    | Gemma 2B           | 2B         | 1.4GB | `gemma:2b`          |
+    | Gemma 7B           | 7B         | 4.8GB | `gemma:7b`          |
     | Solar              | 10.7B      | 6.1GB | `solar`             |
+
     """
     )
+
+    st.markdown("Current Available:")
     models = st.empty()
     models_df = pd.DataFrame(client.list()["models"])
     models.dataframe(models_df)
@@ -84,6 +87,7 @@ if model_name not in avail_models:
     #     # print(f"{p['completed'] / p['total'] = }")
     with st.spinner(f"Pulling model {model_name}..."):
         client.pull(model_name)
+
     # Update available model list after downloading
     models.dataframe(pd.DataFrame(client.list()["models"]))
 
