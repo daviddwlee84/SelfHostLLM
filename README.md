@@ -4,6 +4,12 @@ Learning to self-host LLM on local or cloud
 
 - [Reddit - LocalLlama](https://www.reddit.com/r/LocalLLaMA/)
 
+## Getting Started
+
+1. Install Ollama: `curl -fsSL https://ollama.com/install.sh | sh` (Windows: [Download Ollama on Windows](https://ollama.com/download/windows))
+2. Install Python dependencies: `pip install -r requirements.txt`
+3. Start Streamlit UI: `streamlit run ./Overview.py`
+
 ## LLM Operations and Support Tools
 
 > List support by LangChain: [LLMs | 🦜️🔗 LangChain](https://python.langchain.com/docs/integrations/llms/#features-natively-supported)
