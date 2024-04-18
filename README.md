@@ -8,20 +8,65 @@ Learning to self-host LLM on local or cloud
 
 > List support by LangChain: [LLMs | 🦜️🔗 LangChain](https://python.langchain.com/docs/integrations/llms/#features-natively-supported)
 
-### Ollama
+### Ollama (recommend)
 
 > Easier to run
 
 - [Ollama](https://ollama.com/)
-- [ollama/ollama: Get up and running with Llama 2, Mistral, Gemma, and other large language models.](https://github.com/ollama/ollama)
-- [Ollama | 🦜️🔗 LangChain](https://python.langchain.com/docs/integrations/llms/ollama/)
-- [ChatOllama | 🦜️🔗 LangChain](https://python.langchain.com/docs/integrations/chat/ollama/)
-- [Ollama and LangChain: Run LLMs locally | by Abonia Sojasingarayar | Feb, 2024 | Medium](https://medium.com/@abonia/ollama-and-langchain-run-llms-locally-900931914a46)
-- [Windows preview · Ollama Blog](https://ollama.com/blog/windows-preview)
+  - [OpenAI compatibility · Ollama Blog](https://ollama.com/blog/openai-compatibility)
+  - [Windows preview · Ollama Blog](https://ollama.com/blog/windows-preview)
+    - [Download Ollama on Windows](https://ollama.com/download/windows)
+  - [Ollama and LangChain: Run LLMs locally | by Abonia Sojasingarayar | Feb, 2024 | Medium](https://medium.com/@abonia/ollama-and-langchain-run-llms-locally-900931914a46)
+- GitHub
+  - [ollama/ollama: Get up and running with Llama 2, Mistral, Gemma, and other large language models.](https://github.com/ollama/ollama)
+  - [ollama/ollama-python: Ollama Python library](https://github.com/ollama/ollama-python)
+- LangChain
+  - [Ollama | 🦜️🔗 LangChain](https://python.langchain.com/docs/integrations/llms/ollama/)
+  - [ChatOllama | 🦜️🔗 LangChain](https://python.langchain.com/docs/integrations/chat/ollama/)
+    - [OllamaFunctions | 🦜️🔗 LangChain](https://python.langchain.com/docs/integrations/chat/ollama_functions/)
 
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
+# You should have ollama.service running
+
+ollama run llama2
+ollama run llama2-uncensored
 ```
+
+> Copy existing Ollama to another system
+> 
+> `/usr/local/bin/ollama`
+> 
+> ```ini
+> # /etc/systemd/system/ollama.service
+> 
+> [Unit]
+> Description=Ollama Service
+> After=network-online.target
+> 
+> [Service]
+> ExecStart=/usr/local/bin/ollama serve
+> User=ollama
+> Group=ollama
+> Restart=always
+> RestartSec=3
+> Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+> 
+> [Install]
+> WantedBy=default.target
+> ```
+> 
+> ```bash
+> sudo useradd -r -s /bin/false -U -m -d /usr/share/ollama ollama
+> sudo usermod -a -G render ollama
+> sudo usermod -a -G video ollama
+> sudo usermod -a -G ollama $(whoami)
+> 
+> sudo systemctl daemon-reload
+> sudo systemctl enable ollama
+> sudo systemctl restart ollama
+> sudo systemctl status ollama
+> ```
 
 ### llama.cpp
 
