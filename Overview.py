@@ -31,15 +31,15 @@ Here are some example models that can be downloaded:
 
 model_list = {
     "llama2": "Llama 2",
+    "llama2-uncensored": "Llama 2 Uncensored",
+    "llama2:13b": "Llama 2 13B",
+    "llama2:70b": "Llama 2 70B",
+    "codellama": "Code Llama",
     "mistral": "Mistral",
     "dolphin-phi": "Dolphin Phi",
     "phi": "Phi-2",
     "neural-chat": "Neural Chat",
     "starling-lm": "Starling",
-    "codellama": "Code Llama",
-    "llama2-uncensored": "Llama 2 Uncensored",
-    "llama2:13b": "Llama 2 13B",
-    "llama2:70b": "Llama 2 70B",
     "orca-mini": "Orca Mini",
     "llava": "LLaVA",
     "gemma:2b": "Gemma",
@@ -52,14 +52,15 @@ model_name = st.selectbox(
 )
 
 
+models = st.empty()
 models_df = pd.DataFrame(ollama.list()["models"])
-st.dataframe(models_df)
+models.dataframe(models_df)
 
 avail_models = set(models_df["name"].str.split(":").str[0])
 
 if model_name is None:
     st.warning(
-        f"Please select a model first. Current available models are {avail_models}"
+        f"Please select a model first. Current available models are {avail_models}."
     )
     st.stop()
 
@@ -70,7 +71,11 @@ if model_name not in avail_models:
     #     # print(f"{p['completed'] / p['total'] = }")
     with st.spinner(f"Pulling model {model_name}..."):
         ollama.pull(model_name)
+    # Update available model list after downloading
+    models.dataframe(pd.DataFrame(ollama.list()["models"]))
 
+with st.expander("Model Detail"):
+    st.json(ollama.show(model_name))
 
 client = ollama.Client(host=host_url)
 
@@ -81,6 +86,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+# https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps#build-a-chatgpt-like-app
 if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -95,5 +101,21 @@ if prompt := st.chat_input("What is up?"):
             ],
             stream=True,
         )
-        response = st.write_stream(stream)
+        # Response json
+        # {
+        #     "model": "llama2",
+        #     "created_at": "2024-04-18T06:12:25.939568316Z",
+        #     "message": {
+        #         "role": "assistant",
+        #         "content": '{"name": "John", "age": 30, " occupation": "Software Engineer"}',  # json mode
+        #         "content": "Hello! It's nice to meet you. Is there something I can help you with or would you like to chat?",  # normal mode
+        #     },
+        #     "done": True,
+        #     "total_duration": 3657335949,
+        #     "load_duration": 2350525,
+        #     "prompt_eval_duration": 143723000,
+        #     "eval_count": 23,
+        #     "eval_duration": 3376456000,
+        # }
+        response = st.write_stream((item["message"]["content"] for item in stream))
     st.session_state.messages.append({"role": "assistant", "content": response})
