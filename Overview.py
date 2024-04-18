@@ -29,6 +29,16 @@ model_name = st.selectbox(
     "Model", options=model_list.keys(), format_func=lambda x: model_list[x]
 )
 
+client = ollama.Client(host=host_url)
+
+try:
+    client.list()
+except ollama._types.ResponseError:
+    st.warning(
+        f"The Host URL might not be available: {host_url}. (https://github.com/ollama/ollama/blob/main/docs/faq.md#setting-environment-variables-on-linux)"
+    )
+    st.stop()
+
 with st.expander("Model List"):
     st.markdown(
         """
@@ -54,10 +64,11 @@ with st.expander("Model List"):
     """
     )
     models = st.empty()
-    models_df = pd.DataFrame(ollama.list()["models"])
+    models_df = pd.DataFrame(client.list()["models"])
     models.dataframe(models_df)
 
 avail_models = set(models_df["name"].str.split(":").str[0])
+
 
 if model_name is None:
     st.warning(
@@ -66,19 +77,19 @@ if model_name is None:
     st.stop()
 
 if model_name not in avail_models:
-    # progress = ollama.pull(model_name, stream=True)
+    # Only download model when hosting model
+    # progress = client.pull(model_name, stream=True)
     # for p in progress:
     #     print(p)
     #     # print(f"{p['completed'] / p['total'] = }")
     with st.spinner(f"Pulling model {model_name}..."):
-        ollama.pull(model_name)
+        client.pull(model_name)
     # Update available model list after downloading
-    models.dataframe(pd.DataFrame(ollama.list()["models"]))
+    models.dataframe(pd.DataFrame(client.list()["models"]))
 
 with st.expander("Model Detail"):
-    st.json(ollama.show(model_name))
+    st.json(client.show(model_name))
 
-client = ollama.Client(host=host_url)
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
